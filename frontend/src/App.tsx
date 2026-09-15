@@ -117,7 +117,7 @@ export default function App() {
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
   const [buildingsExpanded, setBuildingsExpanded] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => Object.fromEntries(navigation.map((group) => [group.label, group.label === 'Pilotage'])))
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('sgci-theme') === 'dark')
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('sgci-theme') !== 'light')
 
   useEffect(() => {
     const introTimer = window.setTimeout(() => setShowIntro(false), 3000)
