@@ -28,3 +28,9 @@ export interface EventTypeDefinition { id: string; name: string; code: EventType
 export interface EventVenue { id: string; name: string; address: string; capacity: number; amenities: string[]; status: 'available' | 'maintenance' }
 export interface Evenement { id: string; title: string; typeId: string; venueId: string; organizer: string; startAt: string; endAt: string; status: 'draft' | 'confirmed' | 'completed' | 'cancelled' }
 export interface ReservationEvenement { id: string; eventId: string; venueId: string; requester: string; startAt: string; endAt: string; status: 'pending' | 'confirmed' | 'rejected' }
+export interface Employe { id: string; name: string; email: string; phone: string; department: string; position: string; hireDate: string; status: 'active' | 'on_leave' | 'inactive' }
+export interface Presence { id: string; employeeId: string; date: string; checkIn?: string; checkOut?: string; status: 'present' | 'late' | 'absent' }
+export interface DemandeConge { id: string; employeeId: string; type: 'annual' | 'sick' | 'exceptional'; startDate: string; endDate: string; status: 'pending' | 'approved' | 'rejected' }
+export interface ElementPaie { id: string; employeeId: string; period: string; baseSalary: number; bonuses: number; deductions: number; status: 'draft' | 'validated' | 'paid' }
+export interface Candidature { id: string; position: string; candidateName: string; receivedAt: string; stage: 'received' | 'interview' | 'selected' | 'rejected' }
+export interface EvaluationEmploye { id: string; employeeId: string; period: string; score?: number; objectives: string[]; status: 'planned' | 'completed' }

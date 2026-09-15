@@ -24,6 +24,12 @@ export const navigation: { label: string; items: NavigationItem[] }[] = [
     { label: 'Réservations', key: 'event-reservations', icon: 'calendar-check-2' }, { label: "Types d'événement", key: 'event-types', icon: 'ticket' },
     { label: 'Espaces & lieux', key: 'event-venues', icon: 'map-pinned' },
   ]},
+  { label: 'Ressources humaines', items: [
+    { label: 'Vue générale', key: 'hr', icon: 'briefcase-business' }, { label: 'Employés', key: 'hr-employees', icon: 'user-round-check' },
+    { label: 'Présences & absences', key: 'hr-attendance', icon: 'clock-3' }, { label: 'Congés', key: 'hr-leave', icon: 'calendar-off' },
+    { label: 'Paie', key: 'hr-payroll', icon: 'wallet-cards' }, { label: 'Recrutement', key: 'hr-recruitment', icon: 'graduation-cap' },
+    { label: 'Évaluations', key: 'hr-evaluations', icon: 'clipboard-check' },
+  ]},
   { label: 'Administration', items: [
     { label: 'Utilisateurs', key: 'users', icon: 'user-cog' }, { label: 'Rôles & permissions', key: 'roles', icon: 'shield-check' },
     { label: 'Paramètres', key: 'settings', icon: 'settings' }, { label: "Journal d'activité", key: 'activity', icon: 'scroll-text' },
@@ -97,4 +103,11 @@ Object.assign(moduleMeta, {
   'event-types': { eyebrow: 'Espace événementiel', title: "Types d'événement", description: 'Configurez les catégories : anniversaire, mariage civil, concert ou conférence.' },
   'event-calendar': { eyebrow: 'Espace événementiel', title: 'Calendrier événementiel', description: 'Visualisez les événements et réservations dans le temps.' },
   'event-venues': { eyebrow: 'Espace événementiel', title: 'Espaces & lieux', description: 'Référencez les salles, lieux, capacités et équipements disponibles.' },
+  hr: { eyebrow: 'Ressources humaines', title: 'Vue générale RH', description: 'Pilotez les effectifs, présences, congés et indicateurs sociaux.' },
+  'hr-employees': { eyebrow: 'Ressources humaines', title: 'Employés', description: 'Centralisez les profils, postes, équipes et documents des collaborateurs.' },
+  'hr-attendance': { eyebrow: 'Ressources humaines', title: 'Présences & absences', description: 'Suivez les présences, retards et absences par équipe.' },
+  'hr-leave': { eyebrow: 'Ressources humaines', title: 'Congés', description: 'Gérez les demandes, validations et soldes de congés.' },
+  'hr-payroll': { eyebrow: 'Ressources humaines', title: 'Paie', description: 'Préparez les éléments variables et le suivi mensuel de la paie.' },
+  'hr-recruitment': { eyebrow: 'Ressources humaines', title: 'Recrutement', description: 'Suivez les postes ouverts, candidatures et étapes de recrutement.' },
+  'hr-evaluations': { eyebrow: 'Ressources humaines', title: 'Évaluations', description: 'Planifiez les entretiens et suivez les objectifs des collaborateurs.' },
 })

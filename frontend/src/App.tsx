@@ -12,6 +12,8 @@ const iconMap: Record<IconName, Icons.LucideIcon> = {
   'user-cog': Icons.UserCog, 'shield-check': Icons.ShieldCheck, settings: Icons.Settings, 'scroll-text': Icons.ScrollText,
   'calendar-days': Icons.CalendarDays, 'calendar-check-2': Icons.CalendarCheck2, mail: Icons.Mail, 'folder-open': Icons.FolderOpen,
   contact: Icons.Contact, 'party-popper': Icons.PartyPopper, 'calendar-range': Icons.CalendarRange, 'map-pinned': Icons.MapPinned, ticket: Icons.Ticket,
+  'briefcase-business': Icons.BriefcaseBusiness, 'user-round-check': Icons.UserRoundCheck, 'clock-3': Icons.Clock3, 'calendar-off': Icons.CalendarOff,
+  'wallet-cards': Icons.WalletCards, 'graduation-cap': Icons.GraduationCap, 'clipboard-check': Icons.ClipboardCheck,
 }
 
 function IntroScreen() {
@@ -61,8 +63,8 @@ function Sidebar({ active, onNavigate, onBuildingSelect, selectedBuilding, build
   </>
 }
 
-function Header({ onMenu, sidebarOpen, darkMode, onToggleTheme }: { onMenu: () => void; sidebarOpen: boolean; darkMode: boolean; onToggleTheme: () => void }) {
-  return <header className="topbar"><button className="icon-button menu-button" onClick={onMenu} aria-label={sidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}>{sidebarOpen ? <Icons.X size={20} /> : <Icons.Menu size={20} />}</button><div className="breadcrumb"><span>SGCI Pilot</span><Icons.ChevronRight size={14} /><strong>Tableau de bord</strong></div><div className="topbar-actions"><label className="search"><Icons.Search size={17} /><input placeholder="Rechercher..." /><kbd>⌘ K</kbd></label><button className="theme-toggle" onClick={onToggleTheme} aria-label={darkMode ? 'Activer le mode clair' : 'Activer le mode nuit'} title={darkMode ? 'Mode clair' : 'Mode nuit'}>{darkMode ? <Icons.Sun size={17} /> : <Icons.Moon size={17} />}</button><button className="icon-button notification" aria-label="Notifications"><Icons.Bell size={19} /><i /></button><div className="profile"><div className="avatar">JV</div><div className="profile-text"><strong>Jean Vecko</strong><span>Super administrateur</span></div><Icons.ChevronDown size={15} /></div></div></header>
+function Header({ onMenu, onSignOut, sidebarOpen, darkMode, onToggleTheme }: { onMenu: () => void; onSignOut: () => void; sidebarOpen: boolean; darkMode: boolean; onToggleTheme: () => void }) {
+  return <header className="topbar"><button className="icon-button menu-button" onClick={onMenu} aria-label={sidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}>{sidebarOpen ? <Icons.X size={20} /> : <Icons.Menu size={20} />}</button><div className="breadcrumb"><span>SGCI Pilot</span><Icons.ChevronRight size={14} /><strong>Tableau de bord</strong></div><div className="topbar-actions"><label className="search"><Icons.Search size={17} /><input placeholder="Rechercher..." /><kbd>⌘ K</kbd></label><button className="theme-toggle" onClick={onToggleTheme} aria-label={darkMode ? 'Activer le mode clair' : 'Activer le mode nuit'} title={darkMode ? 'Mode clair' : 'Mode nuit'}>{darkMode ? <Icons.Sun size={17} /> : <Icons.Moon size={17} />}</button><button className="icon-button notification" aria-label="Notifications"><Icons.Bell size={19} /><i /></button><div className="profile"><div className="avatar">JV</div><div className="profile-text"><strong>Jean Vecko</strong><span>Super administrateur</span></div><Icons.ChevronDown size={15} /></div><button className="sign-out-button" onClick={onSignOut} aria-label="Se déconnecter" title="Se déconnecter"><Icons.LogOut size={16} /><span>Déconnexion</span></button></div></header>
 }
 
 function StatCard({ stat }: { stat: typeof stats[number] }) {
@@ -111,7 +113,7 @@ function EventDashboard({ onNavigate }: { onNavigate: (key: ModuleKey) => void }
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(() => localStorage.getItem('sgci-authenticated') === 'true')
   const [active, setActive] = useState<ModuleKey>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null)
@@ -130,7 +132,7 @@ export default function App() {
   }, [darkMode])
 
   if (showIntro) return <IntroScreen />
-  if (!authenticated) return <LoginScreen onLogin={async () => setAuthenticated(true)} />
+  if (!authenticated) return <LoginScreen onLogin={async () => { localStorage.setItem('sgci-authenticated', 'true'); setAuthenticated(true) }} />
 
-  return <div className="app-shell"><Sidebar active={active} onNavigate={(key) => { setActive(key); if (key !== 'buildings') { setSelectedBuilding(null); setBuildingsExpanded(false) } }} onBuildingSelect={(id) => { setActive('buildings'); setSelectedBuilding(id || null) }} selectedBuilding={selectedBuilding} buildingsExpanded={buildingsExpanded} onToggleBuildings={() => setBuildingsExpanded((value) => !value)} expandedGroups={expandedGroups} onToggleGroup={(label) => setExpandedGroups((groups) => ({ ...groups, [label]: !groups[label] }))} open={sidebarOpen} onClose={() => setSidebarOpen(false)} /><main className="main-area"><Header onMenu={() => setSidebarOpen((value) => !value)} sidebarOpen={sidebarOpen} darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />{active === 'dashboard' ? <Dashboard onNavigate={setActive} /> : active === 'buildings' ? <BuildingsPage onNavigate={setActive} selectedBuilding={selectedBuilding} onBuildingSelect={(id) => setSelectedBuilding(id || null)} /> : active === 'events' ? <EventDashboard onNavigate={setActive} /> : <ModulePage module={active} onNavigate={setActive} />}</main></div>
+  return <div className="app-shell"><Sidebar active={active} onNavigate={(key) => { setActive(key); if (key !== 'buildings') { setSelectedBuilding(null); setBuildingsExpanded(false) } }} onBuildingSelect={(id) => { setActive('buildings'); setSelectedBuilding(id || null) }} selectedBuilding={selectedBuilding} buildingsExpanded={buildingsExpanded} onToggleBuildings={() => setBuildingsExpanded((value) => !value)} expandedGroups={expandedGroups} onToggleGroup={(label) => setExpandedGroups((groups) => ({ ...groups, [label]: !groups[label] }))} open={sidebarOpen} onClose={() => setSidebarOpen(false)} /><main className="main-area"><Header onMenu={() => setSidebarOpen((value) => !value)} onSignOut={() => { demoAuth.signOut(); localStorage.removeItem('sgci-authenticated'); setAuthenticated(false) }} sidebarOpen={sidebarOpen} darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />{active === 'dashboard' ? <Dashboard onNavigate={setActive} /> : active === 'buildings' ? <BuildingsPage onNavigate={setActive} selectedBuilding={selectedBuilding} onBuildingSelect={(id) => setSelectedBuilding(id || null)} /> : active === 'events' ? <EventDashboard onNavigate={setActive} /> : <ModulePage module={active} onNavigate={setActive} />}</main></div>
 }
