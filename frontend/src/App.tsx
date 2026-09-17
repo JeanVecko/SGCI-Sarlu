@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import * as Icons from 'lucide-react'
-import { eventCalendar, eventReservations, eventSpaces, moduleMeta, navigation } from './data'
+import { eventCalendar, eventReservations, eventSpaces, logisticsDepots, moduleMeta, navigation } from './data'
 import { demoAuth } from './services/auth'
 import type { IconName, ModuleKey } from './types'
 
@@ -99,6 +99,30 @@ function ModulePage({ module, onNavigate }: { module: ModuleKey; onNavigate: (ke
   return <div className="page-content module-page"><section className="page-heading"><div><p className="eyebrow">{meta.eyebrow}</p><h1>{meta.title}</h1><p className="heading-copy">{meta.description}</p></div><button type="button" className="primary-button" onClick={() => { setNotice(`La création d'une entrée « ${meta.title} » sera reliée à l'API.`); window.setTimeout(() => setNotice(''), 4000) }}><Icons.Plus size={17} /> Nouvelle entrée</button></section><div className="module-toolbar"><label className="table-search"><Icons.Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={`Rechercher dans ${meta.title.toLowerCase()}...`} /></label><div className="status-filter"><button type="button" className="filter-button" onClick={() => setStatusOpen((value) => !value)} aria-expanded={statusOpen}><Icons.SlidersHorizontal size={16} /> Filtres <span>{activeFilters}</span></button>{statusOpen && <div className="status-menu"><p className="status-menu-title">Statut</p>{statuses.map((item) => <button type="button" key={item} className={item === status ? 'selected' : ''} onClick={() => { setStatus(item); setStatusOpen(false) }}>{item === status && <Icons.Check size={13} />}{item}</button>)}</div>}</div><button type="button" className="filter-button" onClick={exportCsv}><Icons.Download size={16} /> Exporter</button>{criteria.length > 0 && <button type="button" className="filter-button" onClick={resetFilters}><Icons.X size={14} /> Réinitialiser</button>}</div>{notice && <p className="module-notice"><Icons.Info size={14} /> {notice}</p>}{criteria.length > 0 && <p className="module-criteria"><Icons.Filter size={13} /> Critères actifs : {criteria.join(' · ')}</p>}<section className="module-empty panel"><div className="empty-icon"><Icon size={25} /></div><h2>Votre espace {meta.title.toLowerCase()}</h2><p>Cette vue est prête à accueillir vos données et vos workflows. La structure est en place pour connecter votre API et enrichir ce module progressivement.</p><button className="secondary-button" onClick={() => onNavigate('events')}><Icons.ArrowLeft size={16} /> Retour aux événements</button></section></div>
 }
 
+function Dashboard({ onNavigate }: { onNavigate: (key: ModuleKey) => void }) {
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => { const timer = setInterval(() => setNow(new Date()), 60000); return () => clearInterval(timer) }, [])
+
+  const totalDepots = logisticsDepots.length
+  const totalArticles = logisticsDepots.reduce((sum, depot) => sum + depot.articles, 0)
+  const totalAlerts = logisticsDepots.reduce((sum, depot) => sum + depot.alerts, 0)
+  const totalOrders = logisticsDepots.reduce((sum, depot) => sum + depot.orders, 0)
+  const totalStockValue = logisticsDepots.reduce((sum, depot) => sum + parseAmount(depot.stockValue), 0)
+
+  const totalSpaceRevenue = eventSpaces.reduce((sum, space) => sum + parseAmount(space.revenue), 0)
+  const totalSpaceReservations = eventSpaces.reduce((sum, space) => sum + space.reservations, 0)
+  const totalCollected = eventReservations.reduce((sum, r) => sum + parseAmount(r.paid), 0)
+  const totalBilled = eventReservations.reduce((sum, r) => sum + parseAmount(r.amount), 0)
+  const collectionRate = totalBilled ? Math.round((totalCollected / totalBilled) * 100) : 0
+
+  const formattedDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(now)
+
+  return <div className="page-content dashboard-page"><section className="page-heading"><div><p className="eyebrow">Pilotage global · {formattedDate}</p><h1>Tableau de bord</h1><p className="heading-copy">Vue consolidée de la logistique et de l'espace événementnel.</p></div></section>
+    <section className="kpi-grid"><div className="kpi-card panel"><span className="kpi-box blue"><Icons.Warehouse size={20} /></span><div><small>Dépôts actifs</small><strong>{totalDepots}</strong><em><Icons.TrendingUp size={12} /> {formatAmount(totalStockValue)} en stock</em></div></div><div className="kpi-card panel"><span className="kpi-box gold"><Icons.Boxes size={20} /></span><div><small>Articles référencés</small><strong>{totalArticles}</strong><em><Icons.AlertTriangle size={12} /> {totalAlerts} alertes</em></div></div><div className="kpi-card panel"><span className="kpi-box green"><Icons.ClipboardCheck size={20} /></span><div><small>Commandes en cours</small><strong>{totalOrders}</strong><em><Icons.TrendingUp size={12} /> Pipeline actif</em></div></div><div className="kpi-card panel"><span className="kpi-box purple"><Icons.CircleDollarSign size={20} /></span><div><small>Revenus événementnels</small><strong>{formatAmount(totalSpaceRevenue)}</strong><em><Icons.CheckCircle2 size={12} /> {collectionRate}% encaissé</em></div></div></section>
+    <section className="dashboard-content"><article className="panel logistics-overview"><div className="panel-heading"><div><p className="eyebrow">Logistique</p><h2>Dépôts actifs</h2></div><button className="text-button" onClick={() => onNavigate('logistics')}>Tous les dépôts <Icons.ArrowUpRight size={15} /></button></div><div className="depot-list">{logisticsDepots.map((depot) => <div className="depot-row" key={depot.id}><span className={`depot-mark ${depot.tone}`}><Icons.Warehouse size={16} /></span><div className="depot-info"><strong>{depot.name}</strong><span>{depot.location} · {depot.articles} articles</span></div><div className="depot-stats"><span className="depot-alerts"><Icons.AlertTriangle size={13} /> {depot.alerts}</span><span className="depot-value">{depot.stockValue}</span></div></div>)}</div></article><article className="panel event-overview"><div className="panel-heading"><div><p className="eyebrow">Espace événementiel</p><h2>Réservations à venir</h2></div><button className="text-button" onClick={() => onNavigate('event-reservations')}>Toutes les réservations <Icons.ArrowUpRight size={15} /></button></div><div className="reservation-table-wrap"><table className="reservation-table"><thead><tr><th>Date</th><th>Événement</th><th>Espace</th><th>Montant</th><th>Statut</th></tr></thead><tbody>{eventReservations.map((reservation) => <tr key={reservation.date + reservation.title}><td><strong>{reservation.date}</strong><span>{reservation.day}</span></td><td><strong>{reservation.title}</strong></td><td><span className="space-tag"><i className={reservation.tone} />{reservation.space}</span></td><td>{reservation.amount}</td><td><span className={`status-pill ${reservation.tone}`}>{reservation.status}</span></td></tr>)}</tbody></table></div></article></section>
+  </div>
+}
+
 function parseAmount(str: string): number {
   return Number(str.replace(/[^0-9]/g, ''))
 }
@@ -124,7 +148,7 @@ function EventDashboard({ onNavigate }: { onNavigate: (key: ModuleKey) => void }
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => sessionStorage.getItem('sgci-intro-seen') !== 'true')
   const [authenticated, setAuthenticated] = useState(() => localStorage.getItem('sgci-authenticated') === 'true')
-  const [active, setActive] = useState<ModuleKey>('events')
+  const [active, setActive] = useState<ModuleKey>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => Object.fromEntries(navigation.map((group) => [group.label, group.label === 'Logistique'])))
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('sgci-theme') !== 'light')
@@ -142,5 +166,5 @@ export default function App() {
   if (showIntro) return <IntroScreen />
   if (!authenticated) return <LoginScreen onLogin={async () => { localStorage.setItem('sgci-authenticated', 'true'); setAuthenticated(true) }} />
 
-  return <div className="app-shell"><Sidebar active={active} onNavigate={(key) => { setActive(key) }} expandedGroups={expandedGroups} onToggleGroup={(label) => setExpandedGroups((groups) => ({ ...groups, [label]: !groups[label] }))} open={sidebarOpen} onClose={() => setSidebarOpen(false)} /><main className="main-area"><Header onMenu={() => setSidebarOpen((value) => !value)} onSignOut={() => { demoAuth.signOut(); localStorage.removeItem('sgci-authenticated'); setAuthenticated(false) }} sidebarOpen={sidebarOpen} darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />{active === 'events' ? <EventDashboard onNavigate={setActive} /> : <ModulePage module={active} onNavigate={setActive} />}</main></div>
+  return <div className="app-shell"><Sidebar active={active} onNavigate={(key) => { setActive(key) }} expandedGroups={expandedGroups} onToggleGroup={(label) => setExpandedGroups((groups) => ({ ...groups, [label]: !groups[label] }))} open={sidebarOpen} onClose={() => setSidebarOpen(false)} /><main className="main-area"><Header onMenu={() => setSidebarOpen((value) => !value)} onSignOut={() => { demoAuth.signOut(); localStorage.removeItem('sgci-authenticated'); setAuthenticated(false) }} sidebarOpen={sidebarOpen} darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />{active === 'dashboard' ? <Dashboard onNavigate={setActive} /> : active === 'events' ? <EventDashboard onNavigate={setActive} /> : <ModulePage module={active} onNavigate={setActive} />}</main></div>
 }

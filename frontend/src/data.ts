@@ -2,6 +2,7 @@ import type { NavigationItem } from './types'
 
 export const navigation: { label: string; items: NavigationItem[] }[] = [
   { label: 'Logistique', items: [
+    { label: 'Tableau de bord', key: 'dashboard', icon: 'layout-dashboard' },
     { label: 'Vue générale', key: 'logistics', icon: 'warehouse' },
     { label: 'Entrepôt principal', key: 'warehouse', icon: 'boxes' },
     { label: 'Dépôts', key: 'depots', icon: 'warehouse' },
@@ -27,6 +28,11 @@ export const eventSpaces = [
   { name: 'Rooftop SGCI', shortName: 'Rooftop', revenue: '$ 6 240', reservations: 11, occupancy: '82%', tone: 'gold' },
 ]
 
+export const logisticsDepots = [
+  { id: 'depot-A', name: 'Entrepôt principal', location: 'Bâtiment A', stockValue: '$ 45 200', alerts: 3, orders: 12, articles: 56, tone: 'blue' },
+  { id: 'depot-B', name: 'Dépôt B', location: 'Bâtiment C', stockValue: '$ 38 100', alerts: 1, orders: 8, articles: 42, tone: 'gold' },
+]
+
 export const eventReservations = [
   { date: '18 sept. 2026', day: 'Ven.', title: 'Conférence — Tech & avenir', space: 'Salle de conférence', client: 'Nadia Bernard', amount: '$ 1 200', paid: '$ 1 200', status: 'Payée', tone: 'blue' },
   { date: '20 sept. 2026', day: 'Dim.', title: 'Anniversaire privé', space: 'Rooftop SGCI', client: 'Thomas Leroy', amount: '$ 850', paid: '$ 500', status: 'Acompte', tone: 'gold' },
@@ -43,6 +49,7 @@ export const eventCalendar = [
 ]
 
 export const moduleMeta: Record<string, { eyebrow: string; title: string; description: string }> = {
+  dashboard: { eyebrow: 'Pilotage global', title: 'Tableau de bord', description: 'Vue consolidée de l’activité logistique et événementielle.' },
   logistics: { eyebrow: 'Logistique', title: 'Vue générale logistique', description: 'Pilotez vos stocks par dépôt et surveillez les flux.' },
   warehouse: { eyebrow: 'Logistique', title: 'Entrepôt principal', description: 'Gérez le stock central, ses emplacements et ses mouvements.' },
   depots: { eyebrow: 'Logistique', title: 'Dépôts', description: 'Chaque dépôt reste une unité de gestion avec son stock et ses règles.' },

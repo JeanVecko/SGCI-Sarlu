@@ -6,6 +6,6 @@ export type IconName =
   | 'contact' | 'party-popper' | 'calendar-range' | 'map-pinned' | 'ticket' | 'briefcase-business'
   | 'user-round-check' | 'clock-3' | 'calendar-off' | 'wallet-cards' | 'graduation-cap' | 'clipboard-check'
 
-export type ModuleKey = 'logistics' | 'warehouse' | 'depots' | 'articles' | 'movements' | 'inventory' | 'requests' | 'suppliers' | 'orders' | 'receipts' | 'events' | 'event-reservations' | 'event-types' | 'event-calendar' | 'event-venues'
+export type ModuleKey = 'dashboard' | 'logistics' | 'warehouse' | 'depots' | 'articles' | 'movements' | 'inventory' | 'requests' | 'suppliers' | 'orders' | 'receipts' | 'events' | 'event-reservations' | 'event-types' | 'event-calendar' | 'event-venues'
 
 export interface NavigationItem { label: string; key: ModuleKey; icon: IconName; badge?: string }
