@@ -64,10 +64,81 @@ export const buildings = [
   { id: 'IMM-004', name: 'Résidence Baobab', address: '7, avenue Kasa-Vubu', city: 'Lubumbashi', units: 18, occupied: 12, monthlyRevenue: '$ 6 900', status: 'Maintenance', updatedAt: '10 sept. 2026', tone: 'gold' },
 ]
 
-export const buildingDetails = {
-  'IMM-001': { name: 'Horizon 6', address: '12, avenue du Commerce, Gombe, Kinshasa', rooms: 32, occupied: 28, available: 4, client: 'Nadia Bernard', clientInitials: 'NB', clientPhone: '+243 81 000 00 00', guarantee: '$ 2 400', monthlyPayment: '$ 1 200', contractStart: '01 janv. 2026', contractEnd: '31 déc. 2026', tone: 'green' },
-  'IMM-002': { name: 'Horizon 4', address: '45, avenue de la Justice, Limete, Kinshasa', rooms: 24, occupied: 21, available: 3, client: 'Thomas Leroy', clientInitials: 'TL', clientPhone: '+243 82 000 00 00', guarantee: '$ 1 800', monthlyPayment: '$ 950', contractStart: '01 févr. 2026', contractEnd: '31 janv. 2027', tone: 'blue' },
+// Categories de logement : le loyer et la garantie dependent de la categorie.
+export type ApartmentCategory = {
+  id: string
+  label: string
+  bedrooms: number
+  monthlyAmount: number
+  guaranteeAmount: number
+  total: number
+  occupied: number
+  tone: 'gold' | 'blue' | 'green' | 'purple'
 }
+
+export const buildingDetails: Record<string, {
+  name: string
+  address: string
+  occupied: number
+  available: number
+  tone: string
+  categories: ApartmentCategory[]
+}> = {
+  'IMM-001': {
+    name: 'Horizon 6',
+    address: '12, avenue du Commerce, Gombe, Kinshasa',
+    occupied: 28,
+    available: 4,
+    tone: 'green',
+    categories: [
+      { id: 'studio', label: 'Studio', bedrooms: 0, monthlyAmount: 600, guaranteeAmount: 1200, total: 12, occupied: 11, tone: 'blue' },
+      { id: 'deux-chambres', label: '2 chambres', bedrooms: 2, monthlyAmount: 1200, guaranteeAmount: 2400, total: 14, occupied: 12, tone: 'green' },
+      { id: 'trois-chambres', label: '3 chambres', bedrooms: 3, monthlyAmount: 1800, guaranteeAmount: 3600, total: 6, occupied: 5, tone: 'gold' },
+    ],
+  },
+  'IMM-002': {
+    name: 'Horizon 4',
+    address: '45, avenue de la Justice, Limete, Kinshasa',
+    occupied: 21,
+    available: 3,
+    tone: 'blue',
+    categories: [
+      { id: 'studio', label: 'Studio', bedrooms: 0, monthlyAmount: 450, guaranteeAmount: 900, total: 8, occupied: 7, tone: 'blue' },
+      { id: 'deux-chambres', label: '2 chambres', bedrooms: 2, monthlyAmount: 950, guaranteeAmount: 1900, total: 10, occupied: 9, tone: 'green' },
+      { id: 'trois-chambres', label: '3 chambres', bedrooms: 3, monthlyAmount: 1400, guaranteeAmount: 2800, total: 6, occupied: 5, tone: 'gold' },
+    ],
+  },
+  'IMM-003': {
+    name: 'Villa des Acacias',
+    address: '8, avenue de la Paix, Ngaliema, Kinshasa',
+    occupied: 9,
+    available: 3,
+    tone: 'green',
+    categories: [
+      { id: 'studio', label: 'Studio', bedrooms: 0, monthlyAmount: 500, guaranteeAmount: 1000, total: 4, occupied: 3, tone: 'blue' },
+      { id: 'trois-chambres', label: '3 chambres', bedrooms: 3, monthlyAmount: 1600, guaranteeAmount: 3200, total: 8, occupied: 6, tone: 'gold' },
+    ],
+  },
+  'IMM-004': {
+    name: 'Résidence Baobab',
+    address: '7, avenue Kasa-Vubu, Lubumbashi',
+    occupied: 12,
+    available: 6,
+    tone: 'gold',
+    categories: [
+      { id: 'studio', label: 'Studio', bedrooms: 0, monthlyAmount: 400, guaranteeAmount: 800, total: 6, occupied: 5, tone: 'blue' },
+      { id: 'deux-chambres', label: '2 chambres', bedrooms: 2, monthlyAmount: 800, guaranteeAmount: 1600, total: 8, occupied: 5, tone: 'green' },
+      { id: 'trois-chambres', label: '3 chambres', bedrooms: 3, monthlyAmount: 1100, guaranteeAmount: 2200, total: 4, occupied: 2, tone: 'gold' },
+    ],
+  },
+}
+
+// Etat initial des categories, par immeuble. Modifiable depuis l'interface.
+export const initialCategories: Record<string, ApartmentCategory[]> = Object.fromEntries(
+  Object.entries(buildingDetails).map(([id, detail]) => [id, detail.categories]),
+)
+
+export const categoryTones: ApartmentCategory['tone'][] = ['blue', 'green', 'gold', 'purple']
 
 export const eventSpaces = [
   { name: 'Salle de conférence', shortName: 'Conférence', revenue: '$ 4 850', reservations: 8, occupancy: '67%', tone: 'blue' },

@@ -3,7 +3,7 @@ export interface Role { id: string; name: string; permissions: Permission[] }
 export interface User { id: string; name: string; email: string; roleId: string; depotIds: string[]; status: 'active' | 'inactive' }
 export interface Immeuble { id: string; name: string; address: string; unitsCount: number; occupiedUnits: number; status: 'active' | 'maintenance' }
 export interface Appartement { id: string; reference: string; immeubleId: string; status: 'occupied' | 'available' | 'maintenance'; clientId?: string }
-export interface Client { id: string; name: string; phone: string; email: string; status: 'active' | 'inactive' }
+export interface Client { id: string; name: string; phone: string; email: string; apartmentNumber?: string; guaranteePaid?: number; monthlyAmount?: number; status: 'active' | 'inactive' }
 export interface Contrat { id: string; clientId: string; appartementId: string; startDate: string; endDate: string; amount: number; status: 'active' | 'pending' | 'expired' }
 export interface Paiement { id: string; contractId: string; amount: number; date: string; status: 'received' | 'pending' }
 export interface Maintenance { id: string; title: string; immeubleId?: string; appartementId?: string; depotId?: string; status: 'requested' | 'in_progress' | 'completed' }
